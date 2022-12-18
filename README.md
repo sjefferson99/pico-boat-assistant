@@ -4,7 +4,7 @@ None of the below fully works as a unified solution as yet.
 At present, the code will connect to a wifi network, build a core website and serve it on the IP allocated on port 80.
 A local relay function will load and a remote pico-lights board running the latest pico-lights repo version will detect on the I2C bus
 
-The relay website presents and responds to API calls as documented on the hoome page, the code assumes local operation and needs logic to abstract hardware from webserver over I2C
+The relay website presents and responds to API calls as documented on the home page, the code assumes local operation and needs logic to abstract hardware from webserver over I2C
 
 As yet the lights commands are not configured or presented on the hub website. Pulling these in from the other repos next.
 
@@ -133,3 +133,4 @@ Dynamic importing of modules is currently beyond me. To create a new module perf
 - Add a sys path and import line to the top of hub.py similar to lights and relay
 - Add an entry to the registered_modules list in config.py, increment the ID number to an unused value, use this ID in the module definition
 - Copy the template code block in the hub.py section under comment "# configuration - manually add your module lines here", uncomment and adjust instances of <module_name> to init your module
+- Build a whole load of code in the module template folder similar to the lights and relay module essentially replace the word "template" for your module and update/extend webpage and API definitions and build out a hardware abstraction - This only supports local modules at present
