@@ -101,13 +101,15 @@ class i2c_hub:
             self.log.info("Lights enabled, configuring...")
             self.lights = pba_lights()
             if self.wireless:
+                self.log.info("Configuring lights website")
                 self.lights.init_web()
 
         if "relays" in enabled_names:
             self.log.info("Relays enabled, configuring...")
             self.relays = pba_relays()
             if self.wireless:
-                self.relays.init_web()
+                self.log.info("Configuring relays website")
+                self.relays.init_web(self.picoserver)
 
         ## Template code for custom module config
         # if "<module_name>" in enabled_names:

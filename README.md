@@ -4,7 +4,9 @@ None of the below fully works as a unified solution as yet.
 At present, the code will connect to a wifi network, build a core website and serve it on the IP allocated on port 80.
 A local relay function will load and a remote pico-lights board running the latest pico-lights repo version will detect on the I2C bus
 
-As yet the relay and lights commands are not configured or presented on the hub website. Pulling these in from the other repos next.
+The relay website presents and responds to API calls as documented on the hoome page, the code assumes local operation and needs logic to abstract hardware from webserver over I2C
+
+As yet the lights commands are not configured or presented on the hub website. Pulling these in from the other repos next.
 
 # Pico-boat-assistant
 A pico powered network of boat automation devices with the ultimate goal of proividing cheap, configurable options to automating your boat (or any space really), with integrations with [Signal-K](https://github.com/SignalK) (open source boat networking protocol) and [Home-Assistant](https://github.com/home-assistant) (awesome home automation server). Hence Pico-boat-assistant.
@@ -59,10 +61,10 @@ DDDDDDDD = 0-255 Duty cycle value 0 = off, 255 = fully on
 - 0b10000010: Get version - 1 byte big endian defining payload length - immediate send of version string, decode as ansi string e.g. "0.2.0"
 - 0b10000011: Get group assignments - 2 bytes big endian defining payload length - immediate send of JSON of that length that can be fed into python json.loads(). This is a python dictionary for use in set light group command.
 
-## Pico-display
+## Pico-display - Not implemented yet
 ### Module details
 
-## Pico-lights
+## Pico-lights - Not fully implemented yet
 ### Module details
 The Boatman pico lights module forms part of a wider Boatman ecosystem documented in the [Boatman project repository](https://github.com/sjefferson99/Boatman-project)
 
@@ -91,7 +93,7 @@ As of this release, group configruation is hard coded and must be updated in fir
 - 2x1Kohm resistors
 - Push button reset switch (optional)
 
-## Pico-Power
+## Pico-Power - Not fully implemented yet
 ### Module details
 
 Pico W based relay controller for web based control of DC and AC circuits onboard.
@@ -121,7 +123,7 @@ The Pico LED is normally off in proper operation.
 
 When connecting to the wifi the LED will flash once per second. Should the conection fail, the LED will flash 5 times per second for the retry backoff period then loop back to connecting.
 
-### Connectivity watchdog
+### Connectivity watchdog - Not implemented yet
 Refer to the config file comments for options to enable polling a specified website at a given interval for a successful http response and take action to reset a specified relay and rerun the wifi connection on any failures.
 
 ## Adding a module

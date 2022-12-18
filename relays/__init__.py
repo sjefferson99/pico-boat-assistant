@@ -1,4 +1,7 @@
 import logging as logging
+from webserver import website
+from webpages import relaysite
+from api import relayapi
 
 class pba_relays:
     """
@@ -9,5 +12,11 @@ class pba_relays:
         self.log = logging.getLogger('relays')
         self.log.info("Init relays module")
         
-    def init_web(self) -> None:
-        pass
+    def init_web(self, coresite: website) -> None:
+        """
+        Tinyweb server definitions for the relay board to extend the webserver passed.
+        """
+        self.log.info("Building relay API website elements")
+        api = relayapi(coresite)
+        self.log.info("Building relay content website elements")
+        site = relaysite(coresite)
