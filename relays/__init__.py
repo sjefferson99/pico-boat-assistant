@@ -1,7 +1,7 @@
 import logging as logging
 from webserver import website
-from webpages import relaysite
-from api import relayapi
+from relays.webpages import relaysite
+from relays.api import relayapi
 
 class pba_relays:
     """

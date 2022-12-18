@@ -47,7 +47,7 @@ class i2c_hub:
         if len(modules) > 0:
             self.log.info("Detected and enabled the following modules (Module name : I2C Address)")
             for module in modules:
-                self.log.info(str(module["name"]) + " : " + str(module["address"]))
+                self.log.info(str(module.key()) + " : " + str(module["address"]))
         else: 
             self.log.info("No modules enabled")
 
@@ -58,7 +58,7 @@ class i2c_hub:
             self.log.info("Starting hub program loop")
             self.loop.run_forever()
 
-    def init_modules(self) -> list:
+    def init_modules(self) -> dict:
         """
         Configures requested local modules and scans the I2C bus for modules
         that return matching module IDs and returns a list of all enabled
@@ -66,14 +66,14 @@ class i2c_hub:
         """
         self.log.info("The following modules are registered on this hub:")
         self.log.info(self.registered_modules)
-        self.enabled_modules = []
+        self.enabled_modules = {}
         
         # Configure local modules
         for module in self.local_modules:
             # If module name via registered module lookup is in supported modules - configure module
             if (module in self.registered_modules):
                 self.log.info("Configuring local module: " + module)
-                self.enabled_modules.append({"moduleID": config.registered_modules[module], "name" : module, "address" : "local"})
+                self.enabled_modules[module] = {"moduleID": config.registered_modules[module], "address" : "local"}
             
             else:
                 self.log.info("Skipping unregistered module: " + module)
@@ -87,24 +87,21 @@ class i2c_hub:
                 moduleID = i2c_utils.get_i2c_module_id(self.i2c1, device)
                 self.log.info("Address: " + str(device) + " : Module ID: " + str(moduleID))
                 if moduleID in self.registered_modules.values():
-                    self.enabled_modules.append({"moduleID": moduleID, "name" : self.get_module_name(moduleID), "address" : device})
+                    self.enabled_modules[self.get_module_name(moduleID)] = {"moduleID": moduleID, "address" : device}
         else:
             self.log.info("No I2C devices found")
         
         # configuration - manually add your module lines here
         self.log.info("Configuring enabled modules")
-        enabled_names = []
-        for module in self.enabled_modules:
-            enabled_names.append(module["name"])
 
-        if "lights" in enabled_names:
+        if "lights" in self.enabled_modules.keys():
             self.log.info("Lights enabled, configuring...")
             self.lights = pba_lights()
             if self.wireless:
                 self.log.info("Configuring lights website")
-                self.lights.init_web()
+                self.lights.init_web(self.picoserver, self.enabled_modules["lights"]["address"])
 
-        if "relays" in enabled_names:
+        if "relays" in self.enabled_modules.keys():
             self.log.info("Relays enabled, configuring...")
             self.relays = pba_relays()
             if self.wireless:

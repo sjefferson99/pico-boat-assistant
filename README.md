@@ -6,7 +6,9 @@ A local relay function will load and a remote pico-lights board running the late
 
 The relay website presents and responds to API calls as documented on the home page, the code assumes local operation and needs logic to abstract hardware from webserver over I2C
 
-As yet the lights commands are not configured or presented on the hub website. Pulling these in from the other repos next.
+As yet the lights commands are not configured or fully presented on the hub website. Pulling these in from the other repos next.
+
+Lights API framework with a driver in place of hardware include to abstract I2c and local as needed is started, but unsure how to pass the I2C address from the API calass to the URL classes that need them.
 
 # Pico-boat-assistant
 A pico powered network of boat automation devices with the ultimate goal of proividing cheap, configurable options to automating your boat (or any space really), with integrations with [Signal-K](https://github.com/SignalK) (open source boat networking protocol) and [Home-Assistant](https://github.com/home-assistant) (awesome home automation server). Hence Pico-boat-assistant.

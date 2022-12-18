@@ -1,5 +1,5 @@
 from webserver import website
-from hardware import relay_board
+from relays.hardware import relay_board
 from json import dumps
 
 class relayapi:
