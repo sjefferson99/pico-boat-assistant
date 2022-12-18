@@ -1,3 +1,11 @@
+# Incomplete project
+None of the below fully works as a unified solution as yet.
+
+At present, the code will connect to a wifi network, build a core website and serve it on the IP allocated on port 80.
+A local relay function will load and a remote pico-lights board running the latest pico-lights repo version will detect on the I2C bus
+
+As yet the relay and lights commands are not configured or presented on the hub website. Pulling these in from the other repos next.
+
 # Pico-boat-assistant
 A pico powered network of boat automation devices with the ultimate goal of proividing cheap, configurable options to automating your boat (or any space really), with integrations with [Signal-K](https://github.com/SignalK) (open source boat networking protocol) and [Home-Assistant](https://github.com/home-assistant) (awesome home automation server). Hence Pico-boat-assistant.
 

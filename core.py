@@ -34,6 +34,3 @@ class pico_boat_assistant:
         led.on()
         sleep_ms(duration)
         led.off()
-
-    def main_loop(self) -> None:
-        pass

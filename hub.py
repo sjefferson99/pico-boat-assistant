@@ -8,6 +8,7 @@ from lights import pba_lights
 sys.path.append("/relays")
 from relays import pba_relays
 from networking import wireless
+from webserver import website
 
 class i2c_hub:
     """
@@ -37,7 +38,8 @@ class i2c_hub:
                 connected = self.wifi.start_wifi()
             
             # Init web server
-            self.log.info("Configuring website")
+            self.log.info("Configuring core website")
+            self.picoserver = website()
         
         # Local and remote modules config
         self.log.info("Configuring available modules")
@@ -48,6 +50,13 @@ class i2c_hub:
                 self.log.info(str(module["name"]) + " : " + str(module["address"]))
         else: 
             self.log.info("No modules enabled")
+
+        # Build asyncio loop for website
+        if self.wireless:
+            self.log.info("Configuring program loop with webserver")
+            self.loop = self.picoserver.run()
+            self.log.info("Starting hub program loop")
+            self.loop.run_forever()
 
     def init_modules(self) -> list:
         """
