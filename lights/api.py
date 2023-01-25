@@ -36,23 +36,26 @@ class lightapi:
             """
             await response.send(html)
 
-        coresite.app.add_resource(lightlist, '/light/api/lights')
-        coresite.app.add_resource(lightdemo, '/light/api/demo')
+        coresite.app.add_resource(lightlist, '/light/api/lights', address=self.address)
+        coresite.app.add_resource(lightdemo, '/light/api/demo', address=self.address)
         #coresite.app.add_resource(light, '/light/api/lights/<lightid>')
 
 class lightlist():
 
-    def get(self, data):
+    def get(self, data, address):
         """Return list of all lights"""
+        self.address = address
         driver = lights_driver()
-        return dumps(driver.list_lights(65)) # TODO get passed actual I2C address
+        html = dumps(driver.list_lights(self.address))
+        return html
 
 class lightdemo():
 
-    def get(self, data):
+    def get(self, data, address):
         """Return list of all lights"""
+        self.address = address
         driver = lights_driver()
-        return dumps(driver.demo(65)) # TODO get passed actual I2C address
+        return dumps(driver.demo(self.address))
 
 # class light():
 #     def put(self, data, lightid):
