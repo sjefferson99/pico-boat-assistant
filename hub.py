@@ -44,10 +44,11 @@ class i2c_hub:
         # Local and remote modules config
         self.log.info("Configuring available modules")
         modules = self.init_modules()
+        print(modules)
         if len(modules) > 0:
             self.log.info("Detected and enabled the following modules (Module name : I2C Address)")
             for module in modules:
-                self.log.info(str(module.key()) + " : " + str(module["address"]))
+                self.log.info(module + " : " + str(modules[module]["address"]))
         else: 
             self.log.info("No modules enabled")
 
