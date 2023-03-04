@@ -23,7 +23,8 @@ class relayapi:
                     <p>
                     Use the following endpoints to drive the pico relays with appropriate data:
                     <ul>
-                    <li>List relays and names - GET /relay/api/relays/</li>
+                    <li>List relays and names - GET <a href="/relay/api/relays">/relay/api/relays</a></li>
+                    <li>Run the demo - GET <a href="/relay/api/demo">/relay/api/demo</a></li>
                     <li>Switch or toggle relay - PUT /relay/api/relays/{relay number (1-4)}</li>
                     </ul>
                     Data:
@@ -38,6 +39,7 @@ class relayapi:
             await response.send(html)
 
         coresite.app.add_resource(relaylist, '/relay/api/relays')
+        coresite.app.add_resource(demo, '/relay/api/demo')
         coresite.app.add_resource(relay, '/relay/api/relays/<relayid>')
 
 class relaylist():
@@ -46,6 +48,14 @@ class relaylist():
         """Return list of all relays"""
         hardware = relay_board()
         return dumps(hardware.list_relays())
+
+class demo():
+
+    def get(self, data):
+        """Execute demo"""
+        hardware = relay_board()
+        hardware.demo()
+        return "Executing relay demo"
 
 class relay():
     def put(self, data, relayid):

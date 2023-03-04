@@ -52,6 +52,7 @@ class relay_board:
 
     def demo(self) -> None:
         """Cycles quickly through toggling each relay"""
+        print("Executing relay demo")
         x = 1
         while x <= 4:
             self.relay_switch(x, 1)
