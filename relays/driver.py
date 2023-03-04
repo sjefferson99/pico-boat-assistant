@@ -3,10 +3,13 @@ from machine import Pin
 
 class relay_board:
     """
-    Creates abstraction for the pi hut 4 opto relay board for Pico W - Maps relays to GP18-21.
-    Extends base tinyweb server with relay functionality
+    Creates driver abstraction for the pi hut 4 opto relay board for Pico W.
+    Maps relays to GP18-21.
+    To be called by the API definitions or local code where no web server
+    exists.
     Execute demo() for a board self test
     """
+
     def __init__(self) -> None:
         self.pin_mapping = {1: 18, 2: 19, 3: 20, 4: 21}
         self.relays = {}

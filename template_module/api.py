@@ -1,5 +1,5 @@
 from webserver import website
-from hardware import template_board
+from template_module.driver import template_board
 from json import dumps
 
 class templateapi:
