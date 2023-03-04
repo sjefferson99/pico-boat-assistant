@@ -55,6 +55,8 @@ class i2c_hub:
         else: 
             self.log.info("No modules enabled")
 
+        # TODO - Write back enabled modules to file for drivers to query
+
         # Build asyncio loop for website
         if self.wireless:
             self.log.info("Configuring program loop with webserver")
