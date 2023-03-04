@@ -10,6 +10,11 @@ class lights_driver:
         """
         self.log = logging.getLogger('template')
 
+        # TODO Determine if lights are local or I2C networked and get address
+        # TODO Add local lights driver functions
+        # TODO Add functions for passing lights commands over the I2C network
+        # TODO Add functions for parsing lights commands from the I2C network
+
     def list_lights(self, i2caddress: int) -> dict:
         self.log.info("Listing lights at address: " + str(i2caddress))
         return {"result": "Some lights"}

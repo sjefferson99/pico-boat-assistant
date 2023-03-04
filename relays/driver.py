@@ -21,6 +21,10 @@ class relay_board:
             self.relays[x] = Pin(p, Pin.OUT)
             x += 1
             p += 1
+    
+        # TODO Determine if relays are local or I2C networked and get address
+        # TODO Add functions for passing relays commands over the I2C network
+        # TODO Add functions for parsing relays commands from the I2C network
         
     def relay_toggle(self, relay: int, duration_ms: int = 1000, initial_value: int=1) -> None:
         """For specified relay, connects common to intiial value terminal for specified duration in ms then toggles to the opposite terminal
