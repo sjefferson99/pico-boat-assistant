@@ -4,8 +4,8 @@ class lights_driver:
 
     def __init__(self) -> None:
         """
-        Creates abstraction for template
-        Extends base tinyweb server with template functionality
+        Driver for executing various lights functions to be called
+        by the API definitions or local code where no web server exists.
         Execute demo() for a board self test
         """
         self.log = logging.getLogger('template')

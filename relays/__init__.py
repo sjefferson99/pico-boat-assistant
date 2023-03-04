@@ -5,7 +5,9 @@ from relays.api import relayapi
 
 class pba_relays:
     """
-    
+    Builds a relays module instance and provides a function for building
+    webpages and API for control.
+    Currently only works using the API for module driver control.
     """
     def __init__(self) -> None:
         # 

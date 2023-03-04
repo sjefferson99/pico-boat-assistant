@@ -14,6 +14,7 @@ class website:
             # Start HTTP response with content-type text/html
             await response.start_html()
             # Send actual HTML page
+            # TODO abstract to set of HTML pages for easier content editing
             html = """<!DOCTYPE html>
             <html>
                 <head> <title>Pico-Boat-Assistant</title> </head>

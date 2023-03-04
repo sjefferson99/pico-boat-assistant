@@ -12,18 +12,20 @@ from webserver import website
 
 class i2c_hub:
     """
-    Pico Boatman I2C hub device, polls responder modules to control or return
-    information.
+    Pico Boatman I2C hub device, polls I2C responder modules to control or
+    return information as sensors.
     """
     def __init__(self, local_modules: list) -> None:
         self.log = logging.getLogger('hub')
         self.log.info("Init I2C Hub")
+        # Set version for use in communication protocol compatability
         self.version = str("0.1.0")
         self.local_modules = local_modules
+        # Detect if wireless module present
         self.wireless = self.detect_wireless()
         self.registered_modules = config.registered_modules
         
-        # Init I2C
+        # Init I2C as hub
         sda1 = Pin(config.sda1)
         scl1 = Pin(config.scl1)
         i2c1_freq = config.i2c1_freq
@@ -39,6 +41,7 @@ class i2c_hub:
             
             # Init web server
             self.log.info("Configuring core website")
+            # Builds the basic website framework ready for modules
             self.picoserver = website()
         
         # Local and remote modules config
@@ -69,9 +72,8 @@ class i2c_hub:
         self.log.info(self.registered_modules)
         self.enabled_modules = {}
         
-        # Configure local modules
+        # Populate list of local modules
         for module in self.local_modules:
-            # If module name via registered module lookup is in supported modules - configure module
             if (module in self.registered_modules):
                 self.log.info("Configuring local module: " + module)
                 self.enabled_modules[module] = {"moduleID": config.registered_modules[module], "address" : "local"}
@@ -79,7 +81,7 @@ class i2c_hub:
             else:
                 self.log.info("Skipping unregistered module: " + module)
         
-        # Scan for I2C modules
+        # Scan for I2C modules and populate names, IDs and addresses
         self.log.info("Scanning I2C bus for modules")
         devices = self.i2c1.scan()
         if devices:
@@ -92,36 +94,57 @@ class i2c_hub:
         else:
             self.log.info("No I2C devices found")
         
-        # configuration - manually add your module lines here
+        # Module configuration - manually add your module lines here using the
+        # template as a guide - current approach assumes the hub has all module
+        # config information with compatible module firmware versions attached
+
+        # TODO Thought: make the module responsible for HTML and execution.
+        #  Hub queries for API definition and HTML and passes everything through
+        #  to module over I2C
+
         self.log.info("Configuring enabled modules")
 
         if "lights" in self.enabled_modules.keys():
             self.log.info("Lights enabled, configuring...")
+            # Configures lights module instance
             self.lights = pba_lights()
+            #Configures lights module web pages and API if wireless available
             if self.wireless:
                 self.log.info("Configuring lights website")
                 self.lights.init_web(self.picoserver, self.enabled_modules["lights"]["address"])
 
         if "relays" in self.enabled_modules.keys():
             self.log.info("Relays enabled, configuring...")
+            # Configures relays module instance
             self.relays = pba_relays()
+            #Configures relays module web pages and API if wireless available
             if self.wireless:
                 self.log.info("Configuring relays website")
                 self.relays.init_web(self.picoserver)
 
         ## Template code for custom module config
         # if "<module_name>" in enabled_names:
+        #     # Configures module instance  
         #     self.<module_name> = pba_<module_name>()
+        #     #Configures module web pages and API if wireless available
         #     if self.wireless:
         #         self.<module_name>.init_web()
 
         return self.enabled_modules
     
     def get_module_name(self, moduleID: int) -> str:
+        """
+        Return module name from the module ID using the registered module list
+        built on init
+        """
         keys = [k for k, v in self.registered_modules.items() if v == moduleID]
         if keys:
             return keys[0]
         return "Invalid module ID"
     
     def detect_wireless(self) -> bool:
+        """
+        Detect if the Pico is a W model with wireless chip.
+        Currently always returns True, needs deteciton logic
+        """
         return True # TODO actually detect wireless

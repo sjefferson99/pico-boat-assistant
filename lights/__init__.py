@@ -5,10 +5,12 @@ from lights.api import lightapi
 
 class pba_lights:
     """
-    
+    Builds a lights module instance and provides a function for building
+    webpages and API for control.
+    Currently only works using the API for module driver control.
     """
     def __init__(self) -> None:
-        # 
+        # TODO expose driver functions for local code execution
         self.log = logging.getLogger('lights')
         self.log.info("Init lights module")
 
