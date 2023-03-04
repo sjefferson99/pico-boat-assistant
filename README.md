@@ -4,11 +4,11 @@ None of the below fully works as a unified solution as yet, this is very alpha
 At present, the code will connect to a wifi network, build a core website and serve it on the IP allocated by DHCP on port 80.
 The module will assume it is a Pico W with a relay board attached and load a local relay control module. If connected via I2C, a pico running the latest firmware in pico-lights will be detected but not yet configured, see notes below.
 
-The relay API endpoint presents and responds to API calls as documented at "/relay", the code assumes local operation and needs logic building to abstract hardware from webserver over I2C
+The index page provides links to the ligths and relay pages and APIs.
 
-As yet the lights commands are not configured or fully presented on the hub website. Pulling these in from the other repos next.
+The relay API endpoint presents and responds to API calls, the code assumes local operation and needs logic building to abstract hardware from webserver over I2C
 
-Lights API framework with a driver in place of hardware include to abstract I2c and local as needed is started, only just worked out how to get the hardware class made available to the API endpoint class.
+The lights webpages are in place, but there is not yet any connection between the API and the lights hardware, only test data is returned.
 
 # Pico-boat-assistant
 A pico powered network of boat automation devices with the ultimate goal of proividing cheap, configurable options to automating your boat (or any space really), with integrations with [Signal-K](https://github.com/SignalK) (open source boat networking protocol) and [Home-Assistant](https://github.com/home-assistant) (awesome home automation server). Hence Pico-boat-assistant.

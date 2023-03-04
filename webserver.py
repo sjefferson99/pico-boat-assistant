@@ -22,6 +22,10 @@ class website:
                     <p>
                     Use the following URL suffixes to drive functions on this Pico:
                         <ul>
+                        <a href="/light">/light</a> - Light module control
+                        </ul>
+                        <ul>
+                        <a href="/light">/relay</a> - Relay module control
                         </ul>
                     </p>
                 </body>
