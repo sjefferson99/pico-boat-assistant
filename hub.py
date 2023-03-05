@@ -67,6 +67,9 @@ class pba_hub:
         i2c1_freq = config.i2c1_freq
         return I2C(1, sda=sda1, scl=scl1, freq=i2c1_freq)
 
+    def get_i2c_interface(self):
+        return self.i2c1
+
     def get_pba_i2c(self):
         return self.pba_i2c
     

@@ -8,7 +8,7 @@ class pba_i2c_hub:
     """
     def __init__(self, i2c: I2C) -> None:
         # Init logging
-        self.log = logging.getLogger('hub')
+        self.log = logging.getLogger('pba_i2c')
         self.log.info("Init I2C Hub")
         self.i2c = i2c
 
