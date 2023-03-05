@@ -13,7 +13,7 @@ class lightapi:
         self.hub = hub
         coresite = hub.get_website()
         # light API page
-        @coresite.app.route('/light/api')
+        @coresite.app.route('/api/lights')
         async def api(request, response):
             # Start HTTP response with content-type text/html
             await response.start_html()
@@ -25,11 +25,11 @@ class lightapi:
                     <p>
                     Use the following endpoints to drive the pico lights with appropriate data:
                     <ul>
-                    <li><a href="/light/api/lights">List lights and names</a> - GET /light/api/lights (Dummy data)</li>
-                    <li><a href="/light/api/demo">Run a light demo</a> - GET /light/api/demo (Dummy data)</li>
-                    <li><a href="/light/api/islocal">Return if lights module is local</a> - GET /light/api/islocal</li>
-                    <li><a href="/light/api/address">Return lights module address (Type error if local)</a> - GET /light/api/address</li>
-                    <li>Turn on a light - PUT /light/api/on/{light id} (Dummy data)</li>
+                    <li><a href="/api/lights/list">List lights and names</a> - GET /api/lights/list (Dummy data)</li>
+                    <li><a href="/api/lights/demo">Run a light demo</a> - GET /api/lights/demo (Dummy data)</li>
+                    <li><a href="/api/lights/address">Return lights module address (Type error if local)</a> - GET /api/lights/address</li>
+                    <li><a href="/api/lights/islocal">Return if lights module is local</a> - GET /api/lights/islocal</li>
+                    <li>Turn on a light - PUT /api/lights/on/{light id} (Dummy data)</li>
                     </ul>
                     </p>
                 </body>
@@ -37,11 +37,11 @@ class lightapi:
             """
             await response.send(html)
 
-        coresite.app.add_resource(lightlist, '/light/api/lights', hub=self.hub)
-        coresite.app.add_resource(lightdemo, '/light/api/demo', hub=self.hub)
+        coresite.app.add_resource(lightlist, '/api/lights/list', hub=self.hub)
+        coresite.app.add_resource(lightdemo, '/api/lights/demo', hub=self.hub)
         coresite.app.add_resource(get_address, '/light/api/address', hub=self.hub)
-        coresite.app.add_resource(is_local, '/light/api/islocal', hub=self.hub)
-        coresite.app.add_resource(on, '/light/api/on/<lightid>', hub=self.hub)
+        coresite.app.add_resource(is_local, '/api/lights/islocal', hub=self.hub)
+        coresite.app.add_resource(on, '/api/lights/on/<lightid>', hub=self.hub)
         #coresite.app.add_resource(light, '/light/api/lights/<lightid>')
 
 class lightlist():

@@ -19,7 +19,7 @@ class templatesite:
                 <body>
                     <h1>template control</h1>                
                     <p>
-                    There is not currently a web form feature available. Please refer to the <a href="/template/api">API reference</a> for interacting with the rest API.
+                    There is not currently a web form feature available. Please refer to the <a href="/api/template">API reference - /api/template</a> for interacting with the REST API.
                     </p>
                 </body>
             </html>\n

@@ -11,7 +11,7 @@ class relayapi:
         Tinyweb server API definitions for the relay board to extend the webserver passed.
         """
         # Relay API page
-        @coresite.app.route('/relay/api')
+        @coresite.app.route('/api/relays')
         async def api(request, response):
             # Start HTTP response with content-type text/html
             await response.start_html()
@@ -23,13 +23,13 @@ class relayapi:
                     <p>
                     Use the following endpoints to drive the pico relays with appropriate data:
                     <ul>
-                    <li>List relays and names - GET <a href="/relay/api/relays">/relay/api/relays</a></li>
-                    <li>Run the demo - GET <a href="/relay/api/demo">/relay/api/demo</a></li>
-                    <li>Switch or toggle relay - PUT /relay/api/relays/{relay number (1-4)}</li>
+                    <li>List relays and names - GET <a href="/api/relays/list">/api/relays/list</a></li>
+                    <li>Run the demo - GET <a href="/api/relays/demo">/api/relays/demo</a></li>
+                    <li>Switch or toggle relay - PUT /api/relays/{relay number (1-4)}</li>
                     </ul>
                     Data:
                     <ul>
-                    <li>type="switch"/"toggle" (Switch=Switch to given value, toggle=Switch intiial value and switch to opposite value after 500ms)</li>
+                    <li>type="switch"/"toggle" (Switch=Switch to given value, toggle=Switch initial value and switch to opposite value after 500ms)</li>
                     <li>value="0"/"1" (0=Common connected to NC, 1=Common connected to NO)</li>
                     </ul>
                     </p>
@@ -38,9 +38,9 @@ class relayapi:
             """
             await response.send(html)
 
-        coresite.app.add_resource(relaylist, '/relay/api/relays')
-        coresite.app.add_resource(demo, '/relay/api/demo')
-        coresite.app.add_resource(relay, '/relay/api/relays/<relayid>')
+        coresite.app.add_resource(relaylist, '/api/relays/list')
+        coresite.app.add_resource(demo, '/api/relays/demo')
+        coresite.app.add_resource(relay, '/api/relays/<relayid>')
 
 class relaylist():
 
