@@ -40,7 +40,7 @@ class lights_driver:
             result = self.local_light_on(lightid)
         else:
             result = self.remote_light_on(lightid, self.get_address())
-        return "Attempted to turn light on: " # + lightid + " : " + result
+        return "Attempted to turn light on: " + lightid + " : " + result
     
     # TODO Add local lights hardware driver functions
     # Add functions for parsing lights commands from the I2C network

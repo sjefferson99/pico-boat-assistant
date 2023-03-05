@@ -18,13 +18,13 @@ class pba_lights:
         self.hub = hub
 
         if hub.is_wireless_enabled():
-            self.init_web(self.hub)
+            self.init_web()
 
-    def init_web(self, hub: hub.i2c_hub) -> None:
+    def init_web(self) -> None:
         """
         Tinyweb server definitions for the relay board to extend the webserver passed.
         """
         self.log.info("Building light API website elements")
-        lightapi(hub)
+        lightapi(self.hub)
         self.log.info("Building light content website elements")
-        lightsite(hub)
+        lightsite(self.hub)

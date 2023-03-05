@@ -62,9 +62,9 @@ class lightdemo():
 
 class on():
 
-    def put(self, data, hub, lightid):
+    def put(self, data, lightid, hub):
         """Turns on a light"""
-        print("Received API call - relayid {}".format(lightid,))
+        print("Received API call - relayid {}".format(lightid))
         driver = lights_driver(hub)
         html = dumps(driver.light_on(lightid))
         return html
