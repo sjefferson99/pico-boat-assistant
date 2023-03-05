@@ -5,6 +5,9 @@ registered_modules = {
 "relays" : 3
 }
 
+# enabled modules filename
+en_mod_file = "enabled_modules.txt"
+
 # I2C
 ## List modules to enable for this node from registered modules:
 local_modules = ["hub", "relays"]
