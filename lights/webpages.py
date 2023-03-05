@@ -1,14 +1,16 @@
 from webserver import website
+import hub
 
 class lightsite:
     """
     Creates a pico webserver ready for modules
     """  
-    def __init__(self, coresite: website) -> None:
+    def __init__(self, hub: hub.i2c_hub) -> None:
         """
         Tinyweb server definitions for the template board to extend the webserver passed.
         """
         # template page
+        coresite = hub.get_website()
         @coresite.app.route('/light')
         async def index(request, response):
             # Start HTTP response with content-type text/html

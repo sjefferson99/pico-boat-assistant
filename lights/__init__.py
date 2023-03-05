@@ -1,24 +1,30 @@
 import logging as logging
-from webserver import website
 from lights.webpages import lightsite
 from lights.api import lightapi
+import hub
 
 class pba_lights:
     """
     Builds a lights module instance and provides a function for building
     webpages and API for control.
-    Currently only works using the API for module driver control.
     """
-    def __init__(self) -> None:
-        # TODO expose driver functions for local code execution
+    def __init__(self, hub: hub.i2c_hub) -> None:
+        """
+        Creates a lights module class, for use by a hub (need to work out local module later).
+        Pass the instantiating hub as "self".
+        """
         self.log = logging.getLogger('lights')
         self.log.info("Init lights module")
+        self.hub = hub
 
-    def init_web(self, coresite: website, i2caddress: int) -> None:
+        if hub.is_wireless_enabled():
+            self.init_web(self.hub)
+
+    def init_web(self, hub: hub.i2c_hub) -> None:
         """
         Tinyweb server definitions for the relay board to extend the webserver passed.
         """
         self.log.info("Building light API website elements")
-        api = lightapi(coresite, i2caddress)
+        lightapi(hub)
         self.log.info("Building light content website elements")
-        site = lightsite(coresite)
+        lightsite(hub)
