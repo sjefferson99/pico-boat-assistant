@@ -46,7 +46,7 @@ class lightlist():
         """Return list of all lights"""
         self.address = address
         driver = lights_driver()
-        html = dumps(driver.list_lights(self.address))
+        html = dumps(driver.list_lights())
         return html
 
 class lightdemo():
@@ -55,7 +55,7 @@ class lightdemo():
         """Return list of all lights"""
         self.address = address
         driver = lights_driver()
-        return dumps(driver.demo(self.address))
+        return dumps(driver.demo())
 
 # class light():
 #     def put(self, data, lightid):
