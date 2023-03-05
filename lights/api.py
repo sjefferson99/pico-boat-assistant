@@ -6,7 +6,7 @@ class lightapi:
     """
     Creates a pico webserver ready for modules
     """  
-    def __init__(self, hub: hub.i2c_hub) -> None:
+    def __init__(self, hub: hub.pba_hub) -> None:
         """
         Tinyweb server API definitions for lights to extend the webserver passed.
         """

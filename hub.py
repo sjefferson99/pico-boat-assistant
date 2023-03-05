@@ -1,6 +1,6 @@
 import logging as logging
 from machine import I2C, Pin
-import i2c_utils
+from pba_i2c import pba_i2c_hub
 import config as config
 import sys
 sys.path.append("/lights")
@@ -13,9 +13,9 @@ import os
 import json
 from uasyncio import Loop
 
-class i2c_hub:
+class pba_hub:
     """
-    Pico Boatman I2C hub device, polls I2C responder modules to control or
+    Pico Boatman hub device, polls I2C responder modules to control or
     return information as sensors.
     """
     def __init__(self, local_modules: list) -> None:
@@ -30,6 +30,7 @@ class i2c_hub:
         
         # Init I2C
         self.i2c1 = self.init_i2c_interface()
+        self.pba_i2c = pba_i2c_hub(self.i2c1)
 
         # Detect if wireless module present and configure
         if self.detect_wireless():
@@ -66,9 +67,8 @@ class i2c_hub:
         i2c1_freq = config.i2c1_freq
         return I2C(1, sda=sda1, scl=scl1, freq=i2c1_freq)
 
-    def get_i2c_interface(self) -> I2C:
-        """Return the I2C interface definition"""
-        return self.i2c1
+    def get_pba_i2c(self):
+        return self.pba_i2c
     
     def init_wireless(self) -> wireless:
         """Init the wireless module"""
@@ -138,7 +138,7 @@ class i2c_hub:
         if devices:
             self.log.info("I2C devices found")
             for device in devices:
-                moduleID = i2c_utils.get_i2c_module_id(self.i2c1, device)
+                moduleID = self.pba_i2c.get_i2c_module_id(device)
                 self.log.info("Address: " + str(device) + " : Module ID: " + str(moduleID))
                 if moduleID in self.registered_modules.values():
                     self.enabled_modules[self.get_module_name(moduleID)] = {"moduleID": moduleID, "address" : device}

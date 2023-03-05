@@ -1,10 +1,8 @@
 import logging as logging
-import json
-import i2c_utils
 import hub
 
 class lights_driver:
-    def __init__(self, hub: hub.i2c_hub) -> None:
+    def __init__(self, hub: hub.pba_hub) -> None:
         """
         Driver for executing various lights functions to be called
         by the API definitions or local code where no web server exists.
@@ -39,7 +37,7 @@ class lights_driver:
         if self.is_local():
             result = self.local_light_on(lightid)
         else:
-            result = self.remote_light_on(lightid, self.get_address())
+            result = self.remote_light_on(lightid, self.get_address(), self.hub)
         return "Attempted to turn light on: " + lightid + " : " + result
     
     # TODO Add local lights hardware driver functions
@@ -55,8 +53,10 @@ class lights_driver:
     ##########################
     # Remote light functions #
     ##########################
-    def remote_light_on(self, lightid, address) -> str:
+    def remote_light_on(self, lightid, address, hub: hub.pba_hub) -> str:
         self.log.info("Turning on remote light")
+        pba_i2c = hub.get_pba_i2c()
+
         return "Success"
     
     # Dummy testing functions
