@@ -9,6 +9,8 @@ sys.path.append("/relays")
 from relays import pba_relays
 from networking import wireless
 from webserver import website
+import os
+import json
 
 class i2c_hub:
     """
@@ -18,12 +20,13 @@ class i2c_hub:
     def __init__(self, local_modules: list) -> None:
         self.log = logging.getLogger('hub')
         self.log.info("Init I2C Hub")
-        # Set version for use in communication protocol compatability
+        # Set version for use in communication protocol compatibility
         self.version = str("0.1.0")
         self.local_modules = local_modules
         # Detect if wireless module present
         self.wireless = self.detect_wireless()
         self.registered_modules = config.registered_modules
+        self.en_mod_file = config.en_mod_file
         
         # Init I2C as hub
         sda1 = Pin(config.sda1)
@@ -44,6 +47,13 @@ class i2c_hub:
             # Builds the basic website framework ready for modules
             self.picoserver = website()
         
+        # Check for and delete old enabled modules file
+        if self.en_mod_file in os.listdir():
+            self.log.info("Removing previous enabled modules file")
+            os.remove(self.en_mod_file)
+        else:
+            self.log.info("No previous enabled modules file to delete")
+
         # Local and remote modules config
         self.log.info("Configuring available modules")
         modules = self.init_modules()
@@ -52,10 +62,14 @@ class i2c_hub:
             self.log.info("Detected and enabled the following modules (Module name : I2C Address)")
             for module in modules:
                 self.log.info(module + " : " + str(modules[module]["address"]))
+            
+            # Write enabled modules information to filesystem for driver use
+            self.log.info("Writing new enabled modules file")
+            with open(self.en_mod_file, "w") as modules_file:
+                json.dump(modules, modules_file)
+
         else: 
             self.log.info("No modules enabled")
-
-        # TODO - Write back enabled modules to file for drivers to query
 
         # Build asyncio loop for website
         if self.wireless:
