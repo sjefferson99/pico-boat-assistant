@@ -62,11 +62,6 @@ class i2c_hub:
             self.log.info("Detected and enabled the following modules (Module name : I2C Address)")
             for module in modules:
                 self.log.info(module + " : " + str(modules[module]["address"]))
-            
-            # Write enabled modules information to filesystem for driver use
-            self.log.info("Writing new enabled modules file")
-            with open(self.en_mod_file, "w") as modules_file:
-                json.dump(modules, modules_file)
 
         else: 
             self.log.info("No modules enabled")
@@ -110,6 +105,11 @@ class i2c_hub:
         else:
             self.log.info("No I2C devices found")
         
+        # Write enabled modules information to filesystem for driver use
+        self.log.info("Writing new enabled modules file")
+        with open(self.en_mod_file, "w") as modules_file:
+            json.dump(self.enabled_modules, modules_file)
+
         # Module configuration - manually add your module lines here using the
         # template as a guide - current approach assumes the hub has all module
         # config information with compatible module firmware versions attached
