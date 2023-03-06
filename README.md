@@ -8,7 +8,7 @@ The index page provides links to the lights and relay pages and APIs.
 
 The relay API endpoint presents and responds to API calls, the code assumes local operation and needs logic building to abstract hardware from webserver over I2C
 
-The lights webpages are in place, but there is not yet any connection between the API and the lights hardware, only test data is returned.
+The lights webpages are in place, but there is not yet a full implementation of the lights API, with only basic on/off for each connected light provided.
 
 # Pico-boat-assistant
 A pico powered network of boat automation devices with the ultimate goal of proividing cheap, configurable options to automating your boat (or any space really), with integrations with [Signal-K](https://github.com/SignalK) (open source boat networking protocol) and [Home-Assistant](https://github.com/home-assistant) (awesome home automation server). Hence Pico-boat-assistant.
