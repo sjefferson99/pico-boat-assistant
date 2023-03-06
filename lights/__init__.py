@@ -2,6 +2,7 @@ import logging as logging
 from lights.webpages import lightsite
 from lights.api import lightapi
 import hub
+from lights.driver import lights_driver
 
 class pba_lights:
     """
@@ -19,6 +20,10 @@ class pba_lights:
 
         if hub.is_wireless_enabled():
             self.init_web()
+        
+        self.driver = lights_driver(self.hub)
+        self.groups = self.driver.get_groups()
+        self.log.info(self.groups)
 
     def init_web(self) -> None:
         """

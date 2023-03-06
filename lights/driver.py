@@ -3,6 +3,7 @@ import hub
 from pba_i2c import pba_i2c_hub
 from machine import I2C
 from time import sleep_ms
+import json
 
 class lights_driver:
     def __init__(self, hub: hub.pba_hub) -> None:
@@ -51,6 +52,8 @@ class lights_driver:
         self.pba_i2c_lights.remote_set_light_demo(self.get_address())
         return "Executed remote set light demo"
 
+    def get_groups(self) -> dict:
+        return self.pba_i2c_lights.get_groups(self.get_address())
     
     # TODO Add local lights hardware driver functions
     # Add functions for parsing lights commands from the I2C network
@@ -168,3 +171,19 @@ class pba_i2c_hub_lights(pba_i2c_hub):
             if d > 100:
                 d+= 40
         return
+    
+    def get_groups(self, address: int) -> dict:
+        command_byte = self.get_groups_byte
+        data = []
+        data.append(command_byte)
+        self.send_data(data, address)    
+        #Expect 2 byte length data return
+        returnData = self.i2c.readfrom(address, 2)
+        length = int.from_bytes(returnData, "big")
+        #Expects immediate send of the group config data in JSON, byte count
+        #specified above
+        returnData = self.i2c.readfrom(address, length)
+        #Populate updated LED groups config data dict
+        # TODO Fix why this shows as an error in pylance
+        self.led_groups = json.loads(returnData)
+        return self.led_groups
