@@ -2,6 +2,7 @@ import logging as logging
 import hub
 from pba_i2c import pba_i2c_hub
 from machine import I2C
+from time import sleep_ms
 
 class lights_driver:
     def __init__(self, hub: hub.pba_hub) -> None:
@@ -27,6 +28,8 @@ class lights_driver:
 
         self.i2c_hub_interface = hub.get_i2c_interface()
 
+        self.pba_i2c_lights = pba_i2c_hub_lights(self.i2c_hub_interface)
+
     def is_local(self) -> bool:
         return self.local            
     
@@ -44,6 +47,11 @@ class lights_driver:
             result = self.set_remote_light(lightid, brightness, self.get_address())
         return "Attempted to turn light on: " + lightid + " : " + result
     
+    def remote_set_light_demo(self) -> str:
+        self.pba_i2c_lights.remote_set_light_demo(self.get_address())
+        return "Executed remote set light demo"
+
+    
     # TODO Add local lights hardware driver functions
     # Add functions for parsing lights commands from the I2C network
     ##########################
@@ -59,20 +67,9 @@ class lights_driver:
     ##########################
     def set_remote_light(self, lightid: int, brightness: int, address: int) -> str:
         self.log.info("Turning on remote light")
-        pba_i2c_lights = pba_i2c_hub_lights(self.i2c_hub_interface)
-        result = pba_i2c_lights.set_light(address, False, lightid, brightness)
+        result = self.pba_i2c_lights.set_light(address, False, lightid, brightness)
         return str(result)
     
-    # Dummy testing functions
-    def list_lights(self) -> dict:
-        self.log.info("Listing lights at address: " + str(self.address))
-        return {"result": "Some lights"}
-
-    def demo(self) -> dict:
-        """Demo of functionality for quick testing"""
-        self.log.info("Performing light demo at address: " + str(self.address))
-        return {"result" : "Demo running"}
-
 class pba_i2c_hub_lights(pba_i2c_hub):
     def __init__(self, i2c: I2C) -> None:
         super().__init__(i2c)
@@ -144,3 +141,30 @@ class pba_i2c_hub_lights(pba_i2c_hub):
         #Expect 1 byte status return
         returnData = self.i2c.readfrom(address, 1)
         return int.from_bytes(returnData, "big") * -1
+    
+    def remote_set_light_demo(self, address: int) -> None:
+        l = 0
+        while l <= 15:
+            self.set_light(address, True, l, 255)
+            sleep_ms(100)
+            l +=1
+        
+        while l >= 0:
+            self.set_light(address, True, l, 255)
+            sleep_ms(100)
+            l -=1
+        
+        self.set_light(address, True, 0, 0)
+
+        l=0
+        d=5
+        while d <= 255:
+            l=0
+            while l <= 15:
+                self.set_light(address, False, l, d)
+                sleep_ms(50)
+                l +=1
+            d += 10
+            if d > 100:
+                d+= 40
+        return

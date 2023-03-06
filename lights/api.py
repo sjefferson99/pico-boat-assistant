@@ -38,27 +38,18 @@ class lightapi:
             """
             await response.send(html)
 
-        coresite.app.add_resource(lightlist, '/api/lights/list', hub=self.hub)
         coresite.app.add_resource(lightdemo, '/api/lights/demo', hub=self.hub)
         coresite.app.add_resource(get_address, '/light/api/address', hub=self.hub)
         coresite.app.add_resource(is_local, '/api/lights/islocal', hub=self.hub)
         coresite.app.add_resource(on, '/api/lights/on/<lightid>', hub=self.hub)
         coresite.app.add_resource(off, '/api/lights/off/<lightid>', hub=self.hub)
 
-class lightlist():
-
-    def get(self, data, hub):
-        """Return list of all lights"""
-        driver = lights_driver(hub)
-        html = dumps(driver.list_lights())
-        return html
-
 class lightdemo():
 
     def get(self, data, hub):
         """Return list of all lights"""
         driver = lights_driver(hub)
-        html = dumps(driver.demo())
+        html = dumps(driver.remote_set_light_demo())
         return html
 
 class on():
