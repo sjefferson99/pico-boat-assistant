@@ -4,7 +4,7 @@ None of the below fully works as a unified solution as yet, this is very alpha
 At present, the code will connect to a wifi network, build a core website and serve it on the IP allocated by DHCP on port 80.
 The module will assume it is a Pico W with a relay board attached and load a local relay control module. If connected via I2C, a pico running the latest firmware in pico-lights will be detected but not yet configured, see notes below.
 
-The index page provides links to the ligths and relay pages and APIs.
+The index page provides links to the lights and relay pages and APIs.
 
 The relay API endpoint presents and responds to API calls, the code assumes local operation and needs logic building to abstract hardware from webserver over I2C
 
