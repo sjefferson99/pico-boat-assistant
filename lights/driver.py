@@ -40,13 +40,21 @@ class lights_driver:
     ##############################
     # Abstracted light functions #
     ##############################
-    def set_light(self, lightid, brightness: int) -> str:
-        self.log.info("Setting light brightness value: " + lightid + " : " + str(brightness))
+    def set_light(self, lightid: int, brightness: int) -> str:
+        self.log.info("Setting light brightness value: " + str(lightid) + " : " + str(brightness))
         if self.is_local():
             result = self.set_local_light(lightid, brightness)
         else:
             result = self.set_remote_light(lightid, brightness, self.get_address())
-        return "Attempted to turn light on: " + lightid + " : " + result
+        return "Attempted to turn light on: " + str(lightid) + " : " + result
+    
+    def set_group(self, groupid: int, brightness: int) -> str:
+        self.log.info("Setting group brightness value: " + str(groupid) + " : " + str(brightness))
+        if self.is_local():
+            result = self.set_local_light(groupid, brightness)
+        else:
+            result = self.set_remote_group(groupid, brightness, self.get_address())
+        return "Attempted to turn light on: " + str(groupid) + " : " + result
     
     def remote_set_light_demo(self) -> str:
         self.pba_i2c_lights.remote_set_light_demo(self.get_address())
@@ -71,6 +79,11 @@ class lights_driver:
     def set_remote_light(self, lightid: int, brightness: int, address: int) -> str:
         self.log.info("Turning on remote light")
         result = self.pba_i2c_lights.set_light(address, False, lightid, brightness)
+        return str(result)
+    
+    def set_remote_group(self, groupid: int, brightness: int, address: int) -> str:
+        self.log.info("Turning on remote group")
+        result = self.pba_i2c_lights.set_group(address, False, groupid, brightness, self.hub)
         return str(result)
     
 class pba_i2c_hub_lights(pba_i2c_hub):
@@ -107,7 +120,7 @@ class pba_i2c_hub_lights(pba_i2c_hub):
 
     def set_light(self, address: int, reset: bool, id: int, duty: int) -> int:
         """
-        address = address of target I2C lights controller module
+        address: address of target I2C lights controller module
         reset: true = set all other lights off and apply this light configuration only
         id: 4 bit (0-15) ID of the light to configure
         duty: 16 bit (0-255) duty for the light PWM fader, 0=off, 255=fully on
@@ -187,3 +200,51 @@ class pba_i2c_hub_lights(pba_i2c_hub):
         # TODO Fix why this shows as an error in pylance
         self.led_groups = json.loads(returnData.decode('utf-8'))
         return self.led_groups
+    
+    def set_group(self, address: int, reset: bool, id: int, duty: int, hub: hub.pba_hub) -> int:
+        """
+        address: address of target I2C lights controller module
+        reset: true = set all other lights off and apply this group configuration only
+        id: 4 bit (0-15) ID of the group to configure
+        duty: 16 bit (0-255) duty for the light PWM fader, 0=off, 255=fully on
+        hub: pba hub object for checking and updating hub group definitions
+        Returns 0 on success or error code
+        
+        Error codes:
+        -1: Command not recognised by pico_lights module
+        -2: Pico_lights module group config out of sync
+        -10: Group ID out of range
+        -20: Duty value out of range
+        -30: Group ID not in local config
+        """
+
+        data = []
+        command_byte = self.set_light_bits + self.group_bit
+        # Check valid light id
+        if id >=0 and id <= 15:
+            # Check group id is in known groups - update if not and check again
+            if str(id) in hub.lights.list_groups()["config"]: #TODO fix received groups JSON so ints are not strings
+                command_byte += id
+            else:
+                hub.lights.set_groups()
+                if str(id) in hub.lights.list_groups()["config"]: #TODO fix received groups JSON so ints are not strings
+                    command_byte += id
+                else:
+                    return -30 #Group ID not in local config 
+        else:
+            return -10 #Light ID out of range
+        
+        if reset:
+            command_byte += self.reset_bit
+
+        data.append(command_byte)
+
+        if duty >=0 and id <=255:
+            data.append(duty)    
+        else:
+            return -20 #Duty out of range
+        
+        self.send_data(data, address)        
+        #Expect 1 byte status return
+        returnData = self.i2c.readfrom(address, 1)
+        return int.from_bytes(returnData, "big") * -1

@@ -31,9 +31,10 @@ class lightapi:
                     <li><a href="/api/lights/islocal">Return if lights module is local</a> - GET /api/lights/islocal</li>
                     <li>Turn on a light - PUT /api/lights/on/{light id}</li>
                     <li>Turn off a light - PUT /api/lights/off/{light id}</li>
-                    <li>Set a light's brightness - PUT /api/lights/brightness/{light id} - put data: {"brightness" = 0-255}</li>
+                    <li>Set a light's brightness - PUT /api/lights/light/brightness/{light id} - put data: {"brightness" = 0-255}</li>
                     <li><a href="/api/lights/getgroups">Return JSON of group configuration from lights module</a> - GET /api/lights/getgroups</li>
                     <li><a href="/api/lights/listgroups">Return JSON of group configuration on hub</a> - GET /api/lights/listgroups</li>
+                    <li>Set a group's brightness - PUT /api/lights/group/brightness/{group id} - put data: {"brightness" = 0-255}</li>
                     </ul>
                     </p>
                 </body>
@@ -46,9 +47,10 @@ class lightapi:
         coresite.app.add_resource(is_local, '/api/lights/islocal', hub=self.hub)
         coresite.app.add_resource(on, '/api/lights/on/<lightid>', hub=self.hub)
         coresite.app.add_resource(off, '/api/lights/off/<lightid>', hub=self.hub)
-        coresite.app.add_resource(brightness, '/api/lights/brightness/<lightid>', hub=self.hub)
+        coresite.app.add_resource(brightness, '/api/lights/light/brightness/<lightid>', hub=self.hub)
         coresite.app.add_resource(get_groups, '/api/lights/getgroups', hub=self.hub)
         coresite.app.add_resource(list_groups, '/api/lights/listgroups', hub=self.hub)
+        coresite.app.add_resource(group_brightness, '/api/lights/group/brightness/<groupid>', hub=self.hub)
 
 class lightdemo():
 
@@ -102,6 +104,16 @@ class list_groups():
         print("Received API call - list groups")
         lights = hub.get_lights()
         html = dumps(lights.list_groups())
+        return html
+
+class group_brightness():
+
+    def put(self, data, groupid, hub):
+        """Sets a group brightness"""
+        brightness = int(data["brightness"])
+        print("Received API call set group brightness - groupid {} - brightness {}".format(groupid, brightness))
+        driver = lights_driver(hub)
+        html = dumps(driver.set_group(int(groupid), brightness))
         return html
 
 # Test info, shouldn't be needed and implemented in the driver

@@ -24,8 +24,7 @@ class pba_lights:
         
         self.driver = lights_driver(self.hub)
         self.groups = {}
-        self.groups["config"] = self.driver.get_groups()
-        self.groups["timestamp"] = time()
+        self.set_groups()
         self.log.info(self.groups)
 
     def init_web(self) -> None:
@@ -39,3 +38,8 @@ class pba_lights:
 
     def list_groups(self) -> dict:
         return self.groups
+    
+    def set_groups(self) -> None:
+        self.groups["config"] = self.driver.get_groups()
+        self.groups["timestamp"] = time()
+        return
