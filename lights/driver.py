@@ -132,8 +132,6 @@ class pba_i2c_hub_lights(pba_i2c_hub):
         -20: Duty value out of range
         """
 
-        id = int(id) # This should not be needed and I have no idea why it is
-
         command_byte = self.set_light_bits
 
         if id >=0 and id <=15:

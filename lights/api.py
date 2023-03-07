@@ -66,7 +66,7 @@ class on():
         """Turns on a light"""
         print("Received API call - turn on lightid {}".format(lightid))
         driver = lights_driver(hub)
-        html = dumps(driver.set_light(lightid, 255))
+        html = dumps(driver.set_light(int(lightid), 255))
         return html
 
 class off():
@@ -75,7 +75,7 @@ class off():
         """Turns off a light"""
         print("Received API call - turn off lightid {}".format(lightid))
         driver = lights_driver(hub)
-        html = dumps(driver.set_light(lightid, 0))
+        html = dumps(driver.set_light(int(lightid), 0))
         return html
     
 class brightness():
@@ -85,7 +85,7 @@ class brightness():
         brightness = int(data["brightness"])
         print("Received API call set brightness - lightid {} - brightness {}".format(lightid, brightness))
         driver = lights_driver(hub)
-        html = dumps(driver.set_light(lightid, brightness))
+        html = dumps(driver.set_light(int(lightid), brightness))
         return html
     
 class get_groups():
