@@ -102,6 +102,9 @@ class pba_hub:
         """Return the current hub website configuration"""
         return self.picowebsite
     
+    def get_lights(self) -> pba_lights:
+        return self.lights
+    
     # No longer used, but keeping funciton for now
     def delete_file(self, filename) -> bool:
         """

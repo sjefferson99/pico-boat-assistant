@@ -32,6 +32,8 @@ class lightapi:
                     <li>Turn on a light - PUT /api/lights/on/{light id}</li>
                     <li>Turn off a light - PUT /api/lights/off/{light id}</li>
                     <li>Set a light's brightness - PUT /api/lights/brightness/{light id} - put data: {"brightness" = 0-255}</li>
+                    <li><a href="/api/lights/getgroups">Return JSON of group configuration from lights module</a> - GET /api/lights/getgroups</li>
+                    <li><a href="/api/lights/listgroups">Return JSON of group configuration on hub</a> - GET /api/lights/listgroups</li>
                     </ul>
                     </p>
                 </body>
@@ -45,11 +47,13 @@ class lightapi:
         coresite.app.add_resource(on, '/api/lights/on/<lightid>', hub=self.hub)
         coresite.app.add_resource(off, '/api/lights/off/<lightid>', hub=self.hub)
         coresite.app.add_resource(brightness, '/api/lights/brightness/<lightid>', hub=self.hub)
+        coresite.app.add_resource(get_groups, '/api/lights/getgroups', hub=self.hub)
+        coresite.app.add_resource(list_groups, '/api/lights/listgroups', hub=self.hub)
 
 class lightdemo():
 
     def get(self, data, hub):
-        """Return list of all lights"""
+        """Runs a remote light set demo"""
         driver = lights_driver(hub)
         html = dumps(driver.remote_set_light_demo())
         return html
@@ -58,7 +62,7 @@ class on():
 
     def put(self, data, lightid, hub):
         """Turns on a light"""
-        print("Received API call - relayid {}".format(lightid))
+        print("Received API call - turn on lightid {}".format(lightid))
         driver = lights_driver(hub)
         html = dumps(driver.set_light(lightid, 255))
         return html
@@ -67,7 +71,7 @@ class off():
 
     def put(self, data, lightid, hub):
         """Turns off a light"""
-        print("Received API call - relayid {}".format(lightid))
+        print("Received API call - turn off lightid {}".format(lightid))
         driver = lights_driver(hub)
         html = dumps(driver.set_light(lightid, 0))
         return html
@@ -75,11 +79,29 @@ class off():
 class brightness():
 
     def put(self, data, lightid, hub):
-        """Turns off a light"""
-        print("Received API call - relayid {}".format(lightid))
+        """Sets a light brightness"""
         brightness = int(data["brightness"])
+        print("Received API call set brightness - lightid {} - brightness {}".format(lightid, brightness))
         driver = lights_driver(hub)
         html = dumps(driver.set_light(lightid, brightness))
+        return html
+    
+class get_groups():
+
+    def get(self, data, hub):
+        """Gets the group config from the remote lights module"""
+        print("Received API call - get groups")
+        driver = lights_driver(hub)
+        html = dumps(driver.get_groups())
+        return html
+    
+class list_groups():
+
+    def get(self, data, hub):
+        """Gets the group config stored in the hub"""
+        print("Received API call - list groups")
+        lights = hub.get_lights()
+        html = dumps(lights.list_groups())
         return html
 
 # Test info, shouldn't be needed and implemented in the driver

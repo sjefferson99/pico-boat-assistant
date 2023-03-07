@@ -3,6 +3,7 @@ from lights.webpages import lightsite
 from lights.api import lightapi
 import hub
 from lights.driver import lights_driver
+from time import time
 
 class pba_lights:
     """
@@ -22,7 +23,9 @@ class pba_lights:
             self.init_web()
         
         self.driver = lights_driver(self.hub)
-        self.groups = self.driver.get_groups()
+        self.groups = {}
+        self.groups["config"] = self.driver.get_groups()
+        self.groups["timestamp"] = time()
         self.log.info(self.groups)
 
     def init_web(self) -> None:
@@ -33,3 +36,6 @@ class pba_lights:
         lightapi(self.hub)
         self.log.info("Building light content website elements")
         lightsite(self.hub)
+
+    def list_groups(self) -> dict:
+        return self.groups
