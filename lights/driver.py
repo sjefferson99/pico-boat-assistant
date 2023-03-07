@@ -185,5 +185,5 @@ class pba_i2c_hub_lights(pba_i2c_hub):
         returnData = self.i2c.readfrom(address, length)
         #Populate updated LED groups config data dict
         # TODO Fix why this shows as an error in pylance
-        self.led_groups = json.loads(returnData)
+        self.led_groups = json.loads(returnData.decode('utf-8'))
         return self.led_groups
