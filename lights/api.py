@@ -29,11 +29,13 @@ class lightapi:
                     <li><a href="/api/lights/demo">Run a light demo</a> - GET /api/lights/demo (Dummy data)</li>
                     <li><a href="/api/lights/address">Return lights module address (Type error if local)</a> - GET /api/lights/address</li>
                     <li><a href="/api/lights/islocal">Return if lights module is local</a> - GET /api/lights/islocal</li>
-                    <li>Turn on a light - PUT /api/lights/on/{light id}</li>
-                    <li>Turn off a light - PUT /api/lights/off/{light id}</li>
+                    <li>Turn on a light - PUT /api/lights/light/on/{light id}</li>
+                    <li>Turn off a light - PUT /api/lights/light/off/{light id}</li>
                     <li>Set a light's brightness - PUT /api/lights/light/brightness/{light id} - put data: {"brightness" = 0-255}</li>
                     <li><a href="/api/lights/getgroups">Return JSON of group configuration from lights module</a> - GET /api/lights/getgroups</li>
                     <li><a href="/api/lights/listgroups">Return JSON of group configuration on hub</a> - GET /api/lights/listgroups</li>
+                    <li>Turn on a group - PUT /api/lights/group/on/{group id}</li>
+                    <li>Turn off a group - PUT /api/lights/group/off/{group id}</li>
                     <li>Set a group's brightness - PUT /api/lights/group/brightness/{group id} - put data: {"brightness" = 0-255}</li>
                     </ul>
                     </p>
@@ -45,11 +47,13 @@ class lightapi:
         coresite.app.add_resource(lightdemo, '/api/lights/demo', hub=self.hub)
         coresite.app.add_resource(get_address, '/light/api/address', hub=self.hub)
         coresite.app.add_resource(is_local, '/api/lights/islocal', hub=self.hub)
-        coresite.app.add_resource(on, '/api/lights/on/<lightid>', hub=self.hub)
-        coresite.app.add_resource(off, '/api/lights/off/<lightid>', hub=self.hub)
-        coresite.app.add_resource(brightness, '/api/lights/light/brightness/<lightid>', hub=self.hub)
+        coresite.app.add_resource(light_on, '/api/lights/light/on/<lightid>', hub=self.hub)
+        coresite.app.add_resource(light_off, '/api/lights/light/off/<lightid>', hub=self.hub)
+        coresite.app.add_resource(light_brightness, '/api/lights/light/brightness/<lightid>', hub=self.hub)
         coresite.app.add_resource(get_groups, '/api/lights/getgroups', hub=self.hub)
         coresite.app.add_resource(list_groups, '/api/lights/listgroups', hub=self.hub)
+        coresite.app.add_resource(group_on, '/api/lights/group/on/<lightid>', hub=self.hub)
+        coresite.app.add_resource(group_off, '/api/lights/group/off/<lightid>', hub=self.hub)
         coresite.app.add_resource(group_brightness, '/api/lights/group/brightness/<groupid>', hub=self.hub)
 
 class lightdemo():
@@ -60,7 +64,7 @@ class lightdemo():
         html = dumps(driver.remote_set_light_demo())
         return html
 
-class on():
+class light_on():
 
     def put(self, data, lightid, hub):
         """Turns on a light"""
@@ -69,7 +73,7 @@ class on():
         html = dumps(driver.set_light(int(lightid), 255))
         return html
 
-class off():
+class light_off():
 
     def put(self, data, lightid, hub):
         """Turns off a light"""
@@ -78,7 +82,7 @@ class off():
         html = dumps(driver.set_light(int(lightid), 0))
         return html
     
-class brightness():
+class light_brightness():
 
     def put(self, data, lightid, hub):
         """Sets a light brightness"""
@@ -104,6 +108,24 @@ class list_groups():
         print("Received API call - list groups")
         lights = hub.get_lights()
         html = dumps(lights.list_groups())
+        return html
+
+class group_on():
+
+    def put(self, data, groupid, hub):
+        """Turns on a group"""
+        print("Received API call - turn on groupid {}".format(groupid))
+        driver = lights_driver(hub)
+        html = dumps(driver.set_group(int(groupid), 255))
+        return html
+
+class group_off():
+
+    def put(self, data, groupid, hub):
+        """Turns off a group"""
+        print("Received API call - turn off groupid {}".format(groupid))
+        driver = lights_driver(hub)
+        html = dumps(driver.set_group(int(groupid), 0))
         return html
 
 class group_brightness():
