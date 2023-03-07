@@ -1,6 +1,6 @@
 import logging as logging
 from machine import I2C, Pin
-import i2c_utils
+from pba_i2c import pba_i2c_hub
 import config as config
 import sys
 sys.path.append("/lights")
@@ -11,49 +11,40 @@ from networking import wireless
 from webserver import website
 import os
 import json
+from uasyncio import Loop
 
-class i2c_hub:
+class pba_hub:
     """
-    Pico Boatman I2C hub device, polls I2C responder modules to control or
+    Pico Boatman hub device, polls I2C responder modules to control or
     return information as sensors.
     """
     def __init__(self, local_modules: list) -> None:
+        # Init logging
         self.log = logging.getLogger('hub')
         self.log.info("Init I2C Hub")
         # Set version for use in communication protocol compatibility
         self.version = str("0.1.0")
+        # Configure module information
         self.local_modules = local_modules
-        # Detect if wireless module present
-        self.wireless = self.detect_wireless()
         self.registered_modules = config.registered_modules
-        self.en_mod_file = config.en_mod_file
         
-        # Init I2C as hub
-        sda1 = Pin(config.sda1)
-        scl1 = Pin(config.scl1)
-        i2c1_freq = config.i2c1_freq
-        self.i2c1 = I2C(1, sda=sda1, scl=scl1, freq=i2c1_freq)
+        # Init I2C
+        self.i2c1 = self.init_i2c_interface()
+        self.pba_i2c = pba_i2c_hub(self.i2c1)
 
-        if self.wireless:
-            # Init wireless
-            self.log.info("Wireless detected, configuring network")
-            self.wifi = wireless()
-            connected = False
-            while connected == False:
-                connected = self.wifi.start_wifi()
+        # Detect if wireless module present and configure
+        if self.detect_wireless():
+            self.log.info("Wireless module detected, configuring")
+            self.wireless_enabled = True
+            self.wifi = self.init_wireless()
             
             # Init web server
             self.log.info("Configuring core website")
             # Builds the basic website framework ready for modules
-            self.picoserver = website()
-        
-        # Check for and delete old enabled modules file
-        if self.en_mod_file in os.listdir():
-            self.log.info("Removing previous enabled modules file")
-            os.remove(self.en_mod_file)
+            self.picowebsite = self.create_website()
         else:
-            self.log.info("No previous enabled modules file to delete")
-
+            self.wireless_enabled = False
+        
         # Local and remote modules config
         self.log.info("Configuring available modules")
         modules = self.init_modules()
@@ -62,21 +53,71 @@ class i2c_hub:
             self.log.info("Detected and enabled the following modules (Module name : I2C Address)")
             for module in modules:
                 self.log.info(module + " : " + str(modules[module]["address"]))
-            
-            # Write enabled modules information to filesystem for driver use
-            self.log.info("Writing new enabled modules file")
-            with open(self.en_mod_file, "w") as modules_file:
-                json.dump(modules, modules_file)
-
         else: 
             self.log.info("No modules enabled")
 
-        # Build asyncio loop for website
-        if self.wireless:
-            self.log.info("Configuring program loop with webserver")
-            self.loop = self.picoserver.run()
-            self.log.info("Starting hub program loop")
-            self.loop.run_forever()
+        # Build and run asyncio loop for website
+        if self.is_wireless_enabled():
+            self.launch_webserver()
+
+    def init_i2c_interface(self) -> I2C:    
+        """Init I2C as hub"""
+        sda1 = Pin(config.sda1)
+        scl1 = Pin(config.scl1)
+        i2c1_freq = config.i2c1_freq
+        return I2C(1, sda=sda1, scl=scl1, freq=i2c1_freq)
+
+    def get_i2c_interface(self):
+        return self.i2c1
+
+    def get_pba_i2c(self):
+        return self.pba_i2c
+    
+    def init_wireless(self) -> wireless:
+        """Init the wireless module"""
+        self.log.info("Configuring wireless network")
+        wifi = wireless()
+        connected = False
+        while connected == False:
+            connected = wifi.start_wifi()
+        return wifi
+    
+    def is_wireless_enabled(self) -> bool:
+        """Boolean check if wireless is configured"""
+        if self.wireless_enabled:
+            return True
+        else:
+            return False
+    
+    def get_wireless(self) -> wireless:
+        """Return the wireless interface configuration"""
+        return self.wifi
+    
+    def create_website(self) -> website:
+        """Create a base website object"""
+        site = website()
+        return site
+    
+    def get_website(self) -> website:
+        """Return the current hub website configuration"""
+        return self.picowebsite
+    
+    def get_lights(self) -> pba_lights:
+        return self.lights
+    
+    # No longer used, but keeping funciton for now
+    def delete_file(self, filename) -> bool:
+        """
+        Delete the filename passed from the root of the filesystem.
+        Return True if file existed, False if it did not and no action taken.
+        """
+        if filename in os.listdir():
+            self.log.info("Removing file: " + filename)
+            os.remove(filename)
+            return True
+        else:
+            self.log.info("No file to delete: " + filename)
+            return False
 
     def init_modules(self) -> dict:
         """
@@ -103,7 +144,7 @@ class i2c_hub:
         if devices:
             self.log.info("I2C devices found")
             for device in devices:
-                moduleID = i2c_utils.get_i2c_module_id(self.i2c1, device)
+                moduleID = self.pba_i2c.get_i2c_module_id(device)
                 self.log.info("Address: " + str(device) + " : Module ID: " + str(moduleID))
                 if moduleID in self.registered_modules.values():
                     self.enabled_modules[self.get_module_name(moduleID)] = {"moduleID": moduleID, "address" : device}
@@ -120,23 +161,20 @@ class i2c_hub:
 
         self.log.info("Configuring enabled modules")
 
+        # Configures lights module instance if enabled
         if "lights" in self.enabled_modules.keys():
             self.log.info("Lights enabled, configuring...")
-            # Configures lights module instance
-            self.lights = pba_lights()
-            #Configures lights module web pages and API if wireless available
-            if self.wireless:
-                self.log.info("Configuring lights website")
-                self.lights.init_web(self.picoserver, self.enabled_modules["lights"]["address"])
+            self.lights = pba_lights(self)
 
+        # TODO pass hub as we do with lights module above
         if "relays" in self.enabled_modules.keys():
             self.log.info("Relays enabled, configuring...")
             # Configures relays module instance
             self.relays = pba_relays()
             #Configures relays module web pages and API if wireless available
-            if self.wireless:
+            if self.wireless_enabled:
                 self.log.info("Configuring relays website")
-                self.relays.init_web(self.picoserver)
+                self.relays.init_web(self.picowebsite)
 
         ## Template code for custom module config
         # if "<module_name>" in enabled_names:
@@ -158,9 +196,21 @@ class i2c_hub:
             return keys[0]
         return "Invalid module ID"
     
+    def get_enabled_modules(self) -> dict:
+        return self.enabled_modules
+    
     def detect_wireless(self) -> bool:
         """
         Detect if the Pico is a W model with wireless chip.
         Currently always returns True, needs deteciton logic
         """
         return True # TODO actually detect wireless
+    
+    def launch_webserver(self):
+        self.log.info("Configuring program loop with webserver")
+        self.loop = self.picowebsite.run()
+        self.log.info("Starting hub program loop")
+        self.loop.run_forever()
+    
+    def get_async_loop(self) -> Loop:
+        return self.loop

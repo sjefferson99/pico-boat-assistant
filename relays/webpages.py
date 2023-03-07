@@ -9,7 +9,7 @@ class relaysite:
         Tinyweb server definitions for the relay board to extend the webserver passed.
         """
         # Relay page
-        @coresite.app.route('/relay')
+        @coresite.app.route('/relays')
         async def index(request, response):
             # Start HTTP response with content-type text/html
             await response.start_html()
@@ -19,7 +19,7 @@ class relaysite:
                 <body>
                     <h1>Relay control</h1>                
                     <p>
-                    There is not currently a web form feature available. Please refer to the <a href="/relay/api">API reference</a> for interacting with the rest API.
+                    There is not currently a web form feature available. Please refer to the <a href="/api/relays">API reference - /api/relays</a> for interacting with the REST API.
                     </p>
                 </body>
             </html>\n

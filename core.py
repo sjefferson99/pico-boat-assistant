@@ -2,7 +2,7 @@ from machine import Pin, I2C
 import logging as logging
 from time import sleep_ms
 import config as config
-from hub import i2c_hub
+from hub import pba_hub
 
 class pico_boat_assistant:
     """
@@ -29,7 +29,7 @@ class pico_boat_assistant:
             self.log.info("Node is a Hub module")
             self.local_modules.remove("hub")
             #Build hub object
-            self.ihub = i2c_hub(self.local_modules)
+            self.ihub = pba_hub(self.local_modules)
         
         else:
             self.log.info("Responder I2C node")
