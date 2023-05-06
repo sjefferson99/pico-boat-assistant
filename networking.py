@@ -39,7 +39,7 @@ class wireless:
         # 5 Second connection attempt with LED status
         max_wait = 10
         while max_wait > 0:
-            if self.wlan.status() < 0 or self.wlan.status() >= 3:
+            if self.wireless_status() < 0 or self.wireless_status() >= 3:
                 break
             max_wait -= 1
             self.log.info("waiting for connection...")
@@ -47,7 +47,7 @@ class wireless:
             sleep_ms(500)
 
         # 10 second back off timer with LED status
-        if self.wlan.status() != 3:
+        if self.wireless_status() != 3:
             self.log.info("Retrying connection in 10 seconds")
             error_wait = 100
             while error_wait > 0:
