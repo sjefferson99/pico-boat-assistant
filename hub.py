@@ -201,10 +201,12 @@ class pba_hub:
     
     def detect_wireless(self) -> bool:
         """
-        Detect if the Pico is a W model with wireless chip.
-        Currently always returns True, needs deteciton logic
+        Detect if the Pico firmware contains the WLAN capability
         """
-        return True # TODO actually detect wireless
+        import network
+        if hasattr(network, "WLAN"):
+            return True
+        return False
     
     def launch_webserver(self):
         self.log.info("Configuring program loop with webserver")
