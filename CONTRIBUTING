@@ -1,0 +1,10 @@
+# Contributions welcome
+
+Please feel free to contribute to this project if you have found an issue, have comments or ideas on new or existing issues or even have code fixes to submit.
+
+## Process
+ - Browse the existing [issues](https://github.com/sjefferson99/pico-boat-assistant/issues)
+ - If the existing issues do not cover your issue or proposed improvement, create a new issues with as much detail as possible
+ - To submit a code fix, fork the repository, create a new branch for the issue and submit a pull request when done
+
+ Approved pull requests will be merged into the develop branch and from there into master on each release.
