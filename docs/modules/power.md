@@ -1,4 +1,4 @@
-## Pico-Power - Not fully implemented yet
+## Pico-Power
 ### Module details
 
 Pico W based relay controller for web based control of DC and AC circuits onboard.
@@ -13,9 +13,11 @@ This code is built around the [Pimoroni Pico W firmware v1.19.9](https://github.
   - [Charging shim](https://thepihut.com/products/lipo-shim-for-pico?variant=39809509785795)
 
 ### Usage
+The PBA firmware (this repo) should be loaded onto a Pico W device with the relays directly connected for now.
+
 - Populate wifi SSID and password in the config.py file
 - Set the startup relay states in the config.py file using the dictionary format example given.
-- Determine pico IP from DHCP server (hostname appears to be "PYBD")
+- Determine pico IP from DHCP server (hostname appears to be "PYBD") or from the serial log output.
 - Navigate to http://<pico IP>:80 for further instructions
 
 ### LED behaviour
