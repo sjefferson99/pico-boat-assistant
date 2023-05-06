@@ -11,7 +11,7 @@ A pico hub module performs the role of I2C master and depending on the hub, will
 
 ### Wiring pinout
 The module does not use any off the shelf Pico hats and is wired directly to the level shifters for the LED strips and connects to the hub module by 2 wire I2C as illustrated in the pinout diagram:
-![Pico lights pinout diagram](/images/LED%20PICO%20Pinout.drawio.png)
+![Pico lights pinout diagram](../images/LED%20PICO%20Pinout.drawio.png)
 
 ### Pico firmware
 This module release was developed against [Pico Micropython v1.18](https://micropython.org/resources/firmware/rp2-pico-20220117-v1.18.uf2).
