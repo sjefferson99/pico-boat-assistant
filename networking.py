@@ -1,5 +1,5 @@
 import network
-from time import sleep_ms
+from time import sleep
 import config
 from machine import Pin
 import logging as logging
@@ -44,7 +44,7 @@ class wireless:
             max_wait -= 1
             self.log.info("waiting for connection...")
             self.led.toggle()
-            sleep_ms(500)
+            sleep(0.5)
 
         # 10 second back off timer with LED status
         if self.wireless_status() != 3:
@@ -52,7 +52,7 @@ class wireless:
             error_wait = 100
             while error_wait > 0:
                 self.led.toggle()
-                sleep_ms(100)
+                sleep(0.100)
                 error_wait -= 1
             return False
                 

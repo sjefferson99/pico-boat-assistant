@@ -71,7 +71,7 @@ class relay():
             return {'message': 'Switched'}, 200
         elif type == "toggle":
             print("API call to toggle")
-            hardware.relay_toggle(int(relayid), 500, int(value))
+            hardware.relay_toggle(int(relayid), 0.5, int(value))
             # Return message AND set HTTP response code to "200"
             return {'message': 'Toggled'}, 200
         else:

@@ -1,10 +1,10 @@
-from machine import Pin, I2C
+from machine import Pin
 import logging as logging
-from time import sleep_ms
+from time import sleep
 import config as config
 from hub import pba_hub
 
-class pico_boat_assistant:
+class PBA:
     """
     Core class for the pico boat assistant.
     Loads the core elements of a PBA module:
@@ -18,8 +18,8 @@ class pico_boat_assistant:
         # Basic IO
         self.log = logging.getLogger('core')
         self.log.info("Init board LED")
-        led = Pin("LED", Pin.OUT)
-        self.flash_led(led)
+        self.led = Pin("LED", Pin.OUT)
+        self.flash_led()
         
         # I2C setup
         self.log.info("Init I2C")
@@ -35,7 +35,7 @@ class pico_boat_assistant:
             self.log.info("Responder I2C node")
             # TODO build responder init logic
 
-    def flash_led(self, led: Pin, duration: int=100) -> None:
-        led.on()
-        sleep_ms(duration)
-        led.off()
+    def flash_led(self, duration: float=0.1) -> None:
+        self.led.on()
+        sleep(duration)
+        self.led.off()

@@ -11,7 +11,7 @@ from networking import wireless
 from webserver import website
 import os
 import json
-from uasyncio import Loop
+# from uasyncio import Loop #TODO needed fro return type definition but needs conftest addition
 
 class pba_hub:
     """
@@ -205,7 +205,7 @@ class pba_hub:
         """
         import network
         if hasattr(network, "WLAN"):
-            return True
+            return False
         return False
     
     def launch_webserver(self):
@@ -214,5 +214,5 @@ class pba_hub:
         self.log.info("Starting hub program loop")
         self.loop.run_forever()
     
-    def get_async_loop(self) -> Loop:
+    def get_async_loop(self): # TODO fix loop import for return type
         return self.loop

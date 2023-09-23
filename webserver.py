@@ -31,6 +31,6 @@ class website:
             """
             await response.send(html)
 
-    def run(self) -> uasyncio.Loop:
+    def run(self): # -> uasyncio.Loop:
         loop = self.app.run(host='0.0.0.0', port=80, loop_forever=False)
         return loop

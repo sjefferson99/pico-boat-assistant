@@ -2,11 +2,11 @@ import logging as logging
 import hub
 from pba_i2c import pba_i2c_hub
 from machine import I2C
-from time import sleep_ms
+from time import sleep
 import json
 
 class lights_driver:
-    def __init__(self, hub: hub.pba_hub) -> None:
+    def __init__(self, hub) -> None: # TODO add pba_hub type after this module isnot called in pba_hub.init()
         """
         Driver for executing various lights functions to be called
         by the API definitions or local code where no web server exists.
@@ -160,12 +160,12 @@ class pba_i2c_hub_lights(pba_i2c_hub):
         l = 0
         while l <= 15:
             self.set_light(address, True, l, 255)
-            sleep_ms(100)
+            sleep(0.1)
             l +=1
         
         while l >= 0:
             self.set_light(address, True, l, 255)
-            sleep_ms(100)
+            sleep(0.100)
             l -=1
         
         self.set_light(address, True, 0, 0)
@@ -176,7 +176,7 @@ class pba_i2c_hub_lights(pba_i2c_hub):
             l=0
             while l <= 15:
                 self.set_light(address, False, l, d)
-                sleep_ms(50)
+                sleep(0.05)
                 l +=1
             d += 10
             if d > 100:
@@ -199,7 +199,7 @@ class pba_i2c_hub_lights(pba_i2c_hub):
         self.led_groups = json.loads(returnData.decode('utf-8'))
         return self.led_groups
     
-    def set_group(self, address: int, reset: bool, id: int, duty: int, hub: hub.pba_hub) -> int:
+    def set_group(self, address: int, reset: bool, id: int, duty: int, hub) -> int: # TODO add pba_hub type after this module isnot called in pba_hub.init()
         """
         address: address of target I2C lights controller module
         reset: true = set all other lights off and apply this group configuration only

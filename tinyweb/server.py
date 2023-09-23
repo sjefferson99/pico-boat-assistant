@@ -5,7 +5,7 @@ MIT license
 """
 import logging as logging
 import uasyncio as asyncio
-import uasyncio.core
+#import uasyncio.core
 import ujson as json
 import gc
 import uos as os
@@ -646,7 +646,8 @@ class webserver:
         try:
             while True:
                 if IS_UASYNCIO_V3:
-                    yield uasyncio.core._io_queue.queue_read(sock)
+                    pass
+                    #yield uasyncio.core._io_queue.queue_read(sock)
                 else:
                     yield asyncio.IORead(sock)
                 csock, caddr = sock.accept()
@@ -671,7 +672,7 @@ class webserver:
         finally:
             sock.close()
 
-    def run(self, host="127.0.0.1", port=8081, loop_forever=True) -> asyncio.Loop:
+    def run(self, host="127.0.0.1", port=8081, loop_forever=True): # -> asyncio.Loop:
         """Run Web Server. By default it runs forever.
 
         Keyword arguments:

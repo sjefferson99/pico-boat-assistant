@@ -1,4 +1,4 @@
-import core
+from pba import PBA
 import logging
 
 """
@@ -9,4 +9,4 @@ modules and starts a TinyWeb server running on asyncio
 log = logging.getLogger('main')
 log.info("Creating core class")
 
-pba = core.pico_boat_assistant()
+pba = PBA()

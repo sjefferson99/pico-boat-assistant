@@ -1,11 +1,8 @@
-from webserver import website
-import hub
-
 class lightsite:
     """
     Creates a pico webserver ready for modules
     """  
-    def __init__(self, hub: hub.pba_hub) -> None:
+    def __init__(self, hub) -> None: # TODO add pba_hub type after this module isnot called in pba_hub.init()
         """
         Tinyweb server definitions for the template board to extend the webserver passed.
         """

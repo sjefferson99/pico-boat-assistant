@@ -10,7 +10,7 @@ class pba_lights:
     Builds a lights module instance and provides a function for building
     webpages and API for control.
     """
-    def __init__(self, hub: hub.pba_hub) -> None:
+    def __init__(self, hub) -> None: # TODO add pba_hub type after this module isnot called in pba_hub.init()
         """
         Creates a lights module class, for use by a hub (need to work out local module later).
         Pass the instantiating hub as "self".
